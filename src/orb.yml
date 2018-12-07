@@ -1,0 +1,30 @@
+version: 2.1
+
+description: Distribute APK with DeployGate
+
+commands:
+  distribute:
+    description: Execution of distribution
+    parameters: 
+      token:
+        description: token
+        type: env_var_name
+      user_name:
+        description: user name
+        type: env_var_name
+      apk_path:
+        description: apk path
+        type: string
+      message:
+        description: message
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: Distribution of APK by DeployGate API
+          command: |
+            curl \
+              -F "token=${<<parameters.token>>}" \
+              -F "file=@<<parameters.apk_path>>" \
+              -F "message=<<parameters.message>>" \
+              https://deploygate.com/api/users/${<<parameters.user_name>>}/apps
