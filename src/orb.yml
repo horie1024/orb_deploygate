@@ -19,12 +19,31 @@ commands:
         description: message
         type: string
         default: ""
+      distribution_name:
+        description: distribution page name
+        type: string
+        default: ""
     steps:
-      - run:
-          name: Distribution of APK by DeployGate API
-          command: |
-            curl \
-              -F "token=${<<parameters.token>>}" \
-              -F "file=@<<parameters.apk_path>>" \
-              -F "message=<<parameters.message>>" \
-              https://deploygate.com/api/users/${<<parameters.user_name>>}/apps
+      - when:
+        condition: <<parameters.distribution_name>>
+        steps:
+          - run:
+            name: Distribution of APK by DeployGate API and creation of distribution page
+            command: |
+              curl \
+                -F "token=${<<parameters.token>>}" \
+                -F "file=@<<parameters.apk_path>>" \
+                -F "message=<<parameters.message>>" \
+                -F "distribution_name=<<parameters.distribution_name>>"
+                https://deploygate.com/api/users/${<<parameters.user_name>>}/apps
+      - unless:
+        condition: <<parameters.distribution_name>>
+        steps:
+          - run:
+            name: Distribution of APK by DeployGate API
+            command: |
+              curl \
+                -F "token=${<<parameters.token>>}" \
+                -F "file=@<<parameters.apk_path>>" \
+                -F "message=<<parameters.message>>" \
+                https://deploygate.com/api/users/${<<parameters.user_name>>}/apps
